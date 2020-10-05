@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <title>Mixins e ajax</title>
+</head>
+<body>
+    <div id="app">
+     
+        <h1 class="title" style="margin: 10px 10px;">{{titulo}}</h1>
+
+        <button @click="getUsers()" class="btn btn-success" style="margin: 10px;">GET USERS</button>
+
+        <div v-if="response.status == 'error' " class="alert alert-danger">{{ response.msg }}</div>
+
+        <div v-if="loader.users" class="">Carregando...</div>
+
+        <ul>
+            <li v-for="user in users" style="list-style: none;">{{ user.name }}</li>
+        </ul>
+        
+    </div>
+
+
+    <script src="http://unpkg.com/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+       var mixin = {  
+        methods: {
+            
+           getUsers(){
+               this.loader.users = true;
+            var url = 'http://jsonplaceholder.typicode.com/users';
+            var vm = this;
+            axios.get(url).then(function(response){
+                 vm.users = response.data;
+                 vm.loader.users = false;
+            });
+            //   this.$http.get(url).then(function(response){
+            //       this.users = response.body;
+            //   }, function(error){
+            //       this.response.status = "error";
+              
+            //   })
+            //   .finally(function(){
+            //     this.loader.users = false;
+            // });
+           },
+       },
+    }
+      
+
+        var app = new Vue({
+        el: "#app",
+         mixins: [mixin],
+
+       data: {
+           titulo: "Storm Wizard",
+           users: [],
+           loader:{
+               users: false,
+           },
+           response: {
+               msg: "Página não encontrada",
+               status: "",    
+           }
+       },   
+        
+    });
+    </script>
+</body>
+</html>
